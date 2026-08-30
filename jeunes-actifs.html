@@ -1,0 +1,1125 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jeunes Actifs — Formations & Emplois pour jeunes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1B2430;
+    --ink-soft:#3A4453;
+    --paper:#FAF9F6;
+    --paper-dim:#F1EFE9;
+    --line:#E4E1D8;
+    --teal:#2F6F5E;
+    --teal-soft:#E4EFEA;
+    --gold:#C08A2E;
+    --gold-soft:#F5EBD8;
+    --muted:#6B7280;
+    --danger:#B23B3B;
+    --radius:2px;
+  }
+
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  #formations, #emplois, #comment, #contact{scroll-margin-top:90px;}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Inter', sans-serif;
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:inherit;text-decoration:none;}
+  button{font-family:inherit;}
+
+  .wrap{max-width:1140px;margin:0 auto;padding:0 32px;}
+
+  /* ---------- HEADER ---------- */
+  header{
+    position:sticky;top:0;z-index:50;
+    background:rgba(250,249,246,0.92);
+    backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--line);
+  }
+  .nav{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:20px 32px;max-width:1140px;margin:0 auto;
+  }
+  .logo{
+    font-family:'Inter', sans-serif;font-weight:700;font-size:1.3rem;
+    letter-spacing:-0.01em;display:flex;align-items:center;gap:11px;
+    text-transform:none;
+  }
+  .logo .brand-name{white-space:nowrap;}
+  .logo .brand-name .accent{color:var(--teal);}
+  .logo .mark{width:10px;height:22px;display:inline-flex;flex-direction:column;gap:2px;}
+  .logo .mark span{display:block;height:9px;width:10px;}
+  .logo .mark span:first-child{background:var(--teal);}
+  .logo .mark span:last-child{background:var(--gold);}
+
+  .nav-links{display:flex;gap:36px;font-size:0.92rem;font-weight:500;color:var(--ink-soft);}
+  .nav-links a, .nav-links button.text-link{transition:color .15s;}
+  .nav-links a:hover, .nav-links a:focus-visible, .nav-links button.text-link:hover{color:var(--ink);}
+
+  .text-link{
+    background:none;border:none;padding:0;margin:0;
+    font-family:inherit;font-size:inherit;color:inherit;
+    cursor:pointer;display:inline;text-align:left;
+  }
+  .text-link-disabled{cursor:default;opacity:0.7;}
+  button.logo{background:none;border:none;padding:0;cursor:pointer;text-align:left;}
+
+  .nav-right{display:flex;align-items:center;gap:14px;}
+
+  .nav-cta{
+    background:var(--ink);color:var(--paper);padding:10px 20px;
+    font-size:0.88rem;font-weight:600;border-radius:var(--radius);
+    border:none;cursor:pointer;transition:background .15s;
+  }
+  .nav-cta:hover{background:var(--ink-soft);}
+
+  .nav-ghost{
+    background:transparent;border:1px solid var(--line);color:var(--ink);
+    padding:9px 18px;font-size:0.88rem;font-weight:600;border-radius:var(--radius);
+    cursor:pointer;transition:border-color .15s;
+  }
+  .nav-ghost:hover{border-color:var(--ink);}
+
+  .user-chip{
+    display:flex;align-items:center;gap:10px;
+    font-size:0.88rem;font-weight:600;
+  }
+  .user-chip .avatar{
+    width:30px;height:30px;border-radius:50%;
+    background:var(--teal);color:#fff;
+    display:flex;align-items:center;justify-content:center;
+    font-family:'Inter', sans-serif;font-weight:700;font-size:0.85rem;
+  }
+  .hidden{display:none !important;}
+
+  /* ---------- HERO ---------- */
+  .hero{padding:96px 32px 80px;max-width:1140px;margin:0 auto;}
+  .eyebrow{
+    font-family:'IBM Plex Mono', monospace;font-size:0.72rem;letter-spacing:0.12em;
+    text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:10px;margin-bottom:24px;
+  }
+  .eyebrow::before{content:"";width:28px;height:1px;background:var(--muted);}
+  .hero h1{
+    font-family:'Inter', sans-serif;font-weight:700;font-size:clamp(2.4rem, 5vw, 4.1rem);
+    line-height:1.06;letter-spacing:-0.015em;max-width:16ch;margin-bottom:28px;
+  }
+  .hero h1 em{font-style:italic;font-weight:400;color:var(--teal);}
+  .hero p.lede{font-size:1.15rem;color:var(--ink-soft);max-width:52ch;margin-bottom:40px;}
+  .hero-actions{display:flex;gap:16px;margin-bottom:64px;flex-wrap:wrap;}
+
+  .btn{
+    padding:14px 26px;font-size:0.95rem;font-weight:600;border-radius:var(--radius);
+    border:1px solid transparent;cursor:pointer;transition:transform .15s, background .15s, border-color .15s;
+    display:inline-flex;align-items:center;gap:8px;
+  }
+  .btn:hover{transform:translateY(-1px);}
+  .btn-teal{background:var(--teal);color:#fff;}
+  .btn-teal:hover{background:#255a4c;}
+  .btn-gold{background:transparent;color:var(--ink);border-color:var(--ink);}
+  .btn-gold:hover{background:var(--ink);color:var(--paper);}
+
+  .paths{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--line);}
+  .path{padding:28px 30px;position:relative;}
+  .path:first-child{border-right:1px solid var(--line);}
+  .path .path-label{
+    font-family:'IBM Plex Mono', monospace;font-size:0.7rem;text-transform:uppercase;
+    letter-spacing:0.1em;margin-bottom:10px;display:flex;align-items:center;gap:8px;
+  }
+  .path .dot{width:7px;height:7px;border-radius:50%;}
+  .path.formations .dot{background:var(--teal);}
+  .path.emplois .dot{background:var(--gold);}
+  .path.formations .path-label{color:var(--teal);}
+  .path.emplois .path-label{color:var(--gold);}
+  .path .path-figure{font-family:'Inter', sans-serif;font-size:2rem;font-weight:700;line-height:1.1;margin-bottom:6px;}
+  .path .path-desc{color:var(--muted);font-size:0.9rem;}
+
+  /* ---------- SECTION SHARED ---------- */
+  section.listing{padding:88px 32px;border-top:1px solid var(--line);position:relative;}
+  section.listing.teal-tint{background:var(--teal-soft);}
+  section.listing.gold-tint{background:var(--gold-soft);}
+
+  .section-head{
+    display:flex;justify-content:space-between;align-items:flex-end;
+    margin-bottom:48px;gap:24px;flex-wrap:wrap;
+  }
+  .section-head h2{font-family:'Inter', sans-serif;font-weight:700;font-size:2.2rem;letter-spacing:-0.01em;}
+  .section-head p{color:var(--muted);max-width:42ch;font-size:0.95rem;}
+  .unlock-note{
+    margin-top:28px;font-size:0.85rem;color:var(--muted);
+    border-top:1px solid var(--line);padding-top:20px;
+  }
+
+  .filter-row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:36px;}
+  .filter-pill{
+    font-family:'IBM Plex Mono', monospace;font-size:0.72rem;text-transform:uppercase;
+    letter-spacing:0.06em;padding:8px 14px;border:1px solid var(--line);border-radius:20px;
+    background:var(--paper);color:var(--ink-soft);cursor:pointer;transition:all .15s;
+  }
+  .filter-pill.active, .filter-pill:hover{border-color:var(--ink);color:var(--ink);}
+
+  .gated{position:relative;}
+  .gated .card-grid{filter:blur(7px);pointer-events:none;user-select:none;}
+  .gated .filter-row{filter:blur(4px);pointer-events:none;user-select:none;}
+
+  .lock-overlay{
+    position:absolute;inset:0;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    text-align:center;gap:16px;padding:24px;
+    z-index:5;
+  }
+  .lock-overlay .lock-icon{
+    width:44px;height:44px;border:1px solid var(--ink);border-radius:50%;
+    display:flex;align-items:center;justify-content:center;font-size:1.1rem;
+    background:var(--paper);
+  }
+  .lock-overlay h3{font-family:'Inter', sans-serif;font-size:1.4rem;font-weight:700;max-width:22ch;}
+  .lock-overlay p{color:var(--muted);font-size:0.92rem;max-width:38ch;}
+  .lock-overlay .lock-actions{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:6px;}
+
+  .card-grid{display:grid;grid-template-columns:repeat(2, 1fr);gap:1px;background:var(--line);border:1px solid var(--line);}
+  .card{background:var(--paper);padding:30px;display:flex;flex-direction:column;gap:14px;transition:background .15s;}
+  .card:hover{background:#fff;}
+  .card-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;}
+  .card-tag{
+    font-family:'IBM Plex Mono', monospace;font-size:0.68rem;text-transform:uppercase;
+    letter-spacing:0.08em;padding:4px 9px;white-space:nowrap;
+  }
+  .card-tag.teal{background:var(--teal);color:#fff;}
+  .card-tag.gold{background:var(--gold);color:#fff;}
+  .card h3{font-family:'Inter', sans-serif;font-size:1.3rem;font-weight:700;line-height:1.25;}
+  .card .org{color:var(--muted);font-size:0.88rem;font-weight:500;}
+  .card .card-desc{color:var(--ink-soft);font-size:0.88rem;line-height:1.5;}
+  .card .meta{
+    display:flex;flex-wrap:wrap;gap:14px;font-size:0.82rem;color:var(--muted);
+    padding-top:6px;border-top:1px solid var(--line);margin-top:auto;
+  }
+  .card .meta span{display:flex;align-items:center;gap:5px;}
+  .card-link{
+    align-self:flex-start;font-size:0.85rem;font-weight:600;margin-top:4px;display:flex;align-items:center;gap:6px;
+    background:none;border:none;padding:0;cursor:pointer;font-family:inherit;
+  }
+  section.teal-tint .card-link{color:var(--teal);}
+  section.gold-tint .card-link{color:var(--gold);}
+  .card-link .arrow{transition:transform .15s;}
+  .card-link:hover .arrow{transform:translateX(3px);}
+
+  /* ---------- HOW IT WORKS ---------- */
+  .how{padding:88px 32px;max-width:1140px;margin:0 auto;}
+  .how-grid{display:grid;grid-template-columns:repeat(3, 1fr);gap:40px;margin-top:48px;}
+  .how-item .num{font-family:'IBM Plex Mono', monospace;font-size:0.78rem;color:var(--muted);margin-bottom:14px;}
+  .how-item h3{font-family:'Inter', sans-serif;font-size:1.25rem;font-weight:700;margin-bottom:10px;}
+  .how-item p{color:var(--muted);font-size:0.92rem;}
+
+  /* ---------- CONTACT ---------- */
+  .contact-section{padding:88px 32px;border-top:1px solid var(--line);background:var(--paper-dim);}
+  .contact-grid{
+    display:grid;grid-template-columns:1fr 1fr;gap:1px;
+    background:var(--line);border:1px solid var(--line);margin-top:40px;
+  }
+  .contact-card{
+    background:var(--paper);padding:32px;display:flex;flex-direction:column;gap:10px;
+  }
+  .contact-card .contact-label{
+    font-family:'IBM Plex Mono', monospace;font-size:0.72rem;text-transform:uppercase;
+    letter-spacing:0.08em;color:var(--muted);
+  }
+  .contact-card a.contact-value{
+    font-family:'Inter', sans-serif;font-size:1.5rem;font-weight:700;
+    color:var(--ink);word-break:break-word;
+  }
+  .contact-card a.contact-value:hover{color:var(--teal);}
+  .contact-card .contact-note{color:var(--muted);font-size:0.85rem;}
+
+  /* ---------- CTA BANNER ---------- */
+  .cta-banner{background:var(--ink);color:var(--paper);padding:80px 32px;text-align:center;}
+  .cta-banner h2{font-family:'Inter', sans-serif;font-weight:700;font-size:2.3rem;max-width:20ch;margin:0 auto 20px;letter-spacing:-0.01em;}
+  .cta-banner p{color:#B9C0C9;max-width:44ch;margin:0 auto 36px;}
+  .cta-banner .btns{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;}
+  .cta-banner .btn-outline{border:1px solid #4A5566;color:var(--paper);background:transparent;}
+  .cta-banner .btn-outline:hover{background:#2A3442;}
+
+  /* ---------- FOOTER ---------- */
+  footer{padding:56px 32px 40px;border-top:1px solid var(--line);}
+  .footer-grid{max-width:1140px;margin:0 auto;display:flex;justify-content:space-between;flex-wrap:wrap;gap:32px;}
+  .footer-brand p{color:var(--muted);font-size:0.88rem;max-width:32ch;margin-top:12px;}
+  .footer-cols{display:flex;gap:64px;flex-wrap:wrap;}
+  .footer-col h4{
+    font-size:0.78rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);
+    margin-bottom:14px;font-family:'IBM Plex Mono', monospace;font-weight:500;
+  }
+  .footer-col a, .footer-col .text-link{display:block;font-size:0.9rem;color:var(--ink-soft);margin-bottom:10px;width:100%;}
+  .footer-col a:hover, .footer-col button.text-link:hover{color:var(--ink);}
+  .footer-bottom{
+    max-width:1140px;margin:48px auto 0;padding-top:24px;border-top:1px solid var(--line);
+    font-size:0.8rem;color:var(--muted);
+  }
+
+  /* ---------- MODAL (auth) ---------- */
+  .modal-backdrop{
+    position:fixed;inset:0;background:rgba(27,36,48,0.55);
+    display:flex;align-items:center;justify-content:center;
+    z-index:100;padding:24px;
+  }
+  .modal{
+    background:var(--paper);width:100%;max-width:460px;
+    border:1px solid var(--line);
+    max-height:90vh;overflow-y:auto;
+  }
+  .modal-head{
+    display:flex;justify-content:space-between;align-items:center;
+    padding:24px 28px 0;
+  }
+  .modal-head h2{font-family:'Inter', sans-serif;font-size:1.5rem;font-weight:700;}
+  .modal-close{
+    background:none;border:none;font-size:1.3rem;cursor:pointer;color:var(--muted);
+    line-height:1;padding:4px;
+  }
+  .modal-close:hover{color:var(--ink);}
+  .modal-sub{padding:8px 28px 0;color:var(--muted);font-size:0.88rem;}
+  .modal-body{padding:24px 28px 28px;display:flex;flex-direction:column;gap:16px;}
+  .field-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  .field{display:flex;flex-direction:column;gap:6px;}
+  .field label{font-size:0.8rem;font-weight:600;color:var(--ink-soft);}
+  .field input, .field select{
+    padding:11px 12px;border:1px solid var(--line);border-radius:var(--radius);
+    font-family:inherit;font-size:0.92rem;background:#fff;color:var(--ink);
+  }
+  .field input:focus, .field select:focus{outline:2px solid var(--teal);outline-offset:1px;border-color:transparent;}
+  .modal-error{
+    background:#FBEAEA;color:var(--danger);font-size:0.85rem;
+    padding:10px 12px;border-left:2px solid var(--danger);display:none;
+  }
+  .modal-error.show{display:block;}
+  .modal-submit{width:100%;justify-content:center;margin-top:4px;}
+  .modal-switch{font-size:0.85rem;color:var(--muted);text-align:center;}
+  .modal-switch button{background:none;border:none;color:var(--teal);font-weight:600;cursor:pointer;font-size:inherit;font-family:inherit;}
+
+  /* ---------- MES CANDIDATURES ---------- */
+  .application-item{
+    border:1px solid var(--line);padding:16px 18px;margin-bottom:12px;
+  }
+  .application-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
+  .application-date{font-size:0.8rem;color:var(--muted);}
+  .application-item h3{font-size:1rem;font-weight:700;}
+  .applications-empty{color:var(--muted);font-size:0.92rem;padding:8px 0;}
+
+  /* ---------- TOAST ---------- */
+  .toast{
+    position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(20px);
+    background:var(--ink);color:var(--paper);padding:14px 22px;
+    font-size:0.88rem;font-weight:600;border-radius:var(--radius);
+    opacity:0;pointer-events:none;transition:opacity .2s, transform .2s;
+    z-index:200;max-width:90vw;text-align:center;
+  }
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+  /* ---------- RESPONSIVE ---------- */
+  @media (max-width:820px){
+    .nav-links{display:none;}
+    .paths{grid-template-columns:1fr;}
+    .path:first-child{border-right:none;border-bottom:1px solid var(--line);}
+    .card-grid{grid-template-columns:1fr;}
+    .how-grid{grid-template-columns:1fr;}
+    .hero{padding:64px 24px 56px;}
+    section.listing{padding:64px 24px;}
+    .wrap, .nav{padding:0 20px;}
+    .field-row{grid-template-columns:1fr;}
+  }
+
+  :focus-visible{outline:2px solid var(--teal);outline-offset:2px;}
+  @media (prefers-reduced-motion: reduce){*{transition:none !important; scroll-behavior:auto !important;}}
+</style>
+</head>
+<body>
+
+<header>
+  <nav class="nav">
+    <button type="button" class="logo" onclick="scrollToTop()"><span class="mark"><span></span><span></span></span><span class="brand-name">Jeunes <span class="accent">Actifs</span></span></button>
+    <div class="nav-links">
+      <button type="button" class="text-link" onclick="scrollToSection('formations')">Formations</button>
+      <button type="button" class="text-link" onclick="scrollToSection('emplois')">Emplois</button>
+      <button type="button" class="text-link" onclick="scrollToSection('comment')">Comment ça marche</button>
+      <button type="button" class="text-link" onclick="scrollToSection('contact')">Contact</button>
+    </div>
+    <div class="nav-right">
+      <div id="loggedOutControls">
+        <button class="nav-ghost" onclick="openModal('login')">Se connecter</button>
+        <button class="nav-cta" onclick="openModal('signup')">Créer un compte</button>
+      </div>
+      <div id="loggedInControls" class="hidden user-chip">
+        <span class="avatar" id="userInitial">?</span>
+        <span id="userName">—</span>
+        <button class="nav-ghost" onclick="openApplicationsModal()">Mes candidatures</button>
+        <button class="nav-ghost" onclick="logout()">Déconnexion</button>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<section class="hero">
+  <div class="eyebrow">Plateforme d'orientation et d'insertion professionnelle</div>
+  <h1>Deux chemins, <em>une seule</em> destination : votre avenir.</h1>
+  <p class="lede">Jeunes Actifs accompagne étudiants et jeunes actifs dans la recherche d'une formation qualifiante ou d'un premier emploi, avec des parcours vérifiés et un accompagnement personnalisé à chaque étape.</p>
+  <div class="hero-actions" id="heroActions">
+    <button class="btn btn-teal" onclick="Modal('signup')">Créer un compte gratuit</button>
+    <button class="btn btn-gold" onclick="openModal('login')">J'ai déjà un compte</button>
+  </div>
+
+  <div class="paths">
+    <div class="path formations">
+      <div class="path-label"><span class="dot"></span>Se former</div>
+      <div class="path-figure">Se former en travaillant</div>
+      <div class="path-desc">Grâce à nos écoles partenaires et à l'alternance, votre formation est financée pendant que vous travaillez.</div>
+      </div>
+    <div class="path emplois">
+      <div class="path-label"><span class="dot"></span>Travailler</div>
+      <div class="path-figure">340+</div>
+      <div class="path-desc">offres ouvertes aux jeunes diplômés, alternants et premiers emplois.</div>
+    </div>
+  </div>
+</section>
+
+<section class="listing teal-tint" id="formations">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <h2>Formations</h2>
+        <p>Des parcours vérifiés pour construire une qualification reconnue, du commerce aux métiers manuels.</p>
+      </div>
+    </div>
+
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-top"><h3>BTS Techniques de Commercialisation</h3><span class="card-tag teal">Bac+2</span></div>
+        <p class="card-desc">Anciennement appelé « BTS MUC », ce diplôme d'État forme à la gestion d'une unité commerciale : développement de clientèle, animation d'une équipe de vente, actions marketing et gestion de la relation client. Accessible après le bac, souvent en alternance.</p>
+        <div class="meta"><span>📍 Île-de-France</span><span>⏱ 2 ans, alternance</span></div>
+        <button type="button" class="card-link" onclick="handleApply(event, 'formation', 'BTS Techniques de Commercialisation')">Envoyer ma demande <span class="arrow">→</span></button>
+      </div>
+      <div class="card">
+        <div class="card-top"><h3>Bachelor Commerce</h3><span class="card-tag teal">Bac+3</span></div>
+        <p class="card-desc">Formation professionnalisante en 3 ans qui approfondit la négociation, le marketing et la gestion de la relation client, avec souvent une dimension internationale et des stages en entreprise.</p>
+        <div class="meta"><span>📍 Île-de-France</span><span>⏱ 3 ans</span></div>
+        <button type="button" class="card-link" onclick="handleApply(event, 'formation', 'Bachelor Commerce')">Envoyer ma demande <span class="arrow">→</span></button>
+      </div>
+      <div class="card">
+        <div class="card-top"><h3>Master Bac+5 Management et Stratégie d'Entreprise</h3><span class="card-tag teal">Bac+5</span></div>
+        <p class="card-desc">Formation généraliste en gestion d'entreprise et pilotage stratégique, destinée aux jeunes qui visent des postes à responsabilité.</p>
+        <div class="meta"><span>📍 Île-de-France</span><span>⏱ 2 ans</span></div>
+        <button type="button" class="card-link" onclick="handleApply(event, 'formation', 'Master Bac+5 Management et Stratégie d\'Entreprise')">Envoyer ma demande <span class="arrow">→</span></button>
+      </div>
+      <div class="card">
+        <div class="card-top"><h3>DEAES — Accompagnant Éducatif et Social</h3><span class="card-tag teal">Bac+1</span></div>
+        <p class="card-desc">Prépare à accompagner des personnes en situation de handicap, de dépendance ou de fragilité dans les actes de la vie quotidienne.</p>
+        <div class="meta"><span>📍 Île-de-France</span><span>⏱ 12–18 mois</span></div>
+        <button type="button" class="card-link" onclick="handleApply(event, 'formation', 'DEAES — Accompagnant Éducatif et Social')">Envoyer ma demande <span class="arrow">→</span></button>
+      </div>
+      <div class="card">
+        <div class="card-top"><h3>CAP Plomberie et Installations Sanitaires</h3><span class="card-tag teal">Métier manuel</span></div>
+        <p class="card-desc">Apprentissage de l'installation, de l'entretien et de la réparation des systèmes sanitaires, de chauffage et de distribution d'eau.</p>
+        <div class="meta"><span>📍 Île-de-France</span><span>⏱ 2 ans, alternance</span></div>
+        <button type="button" class="card-link" onclick="handleApply(event, 'formation', 'CAP Plomberie et Installations Sanitaires')">Envoyer ma demande <span class="arrow">→</span></button>
+      </div>
+      <div class="card">
+        <div class="card-top"><h3>CAP Mécanique Automobile</h3><span class="card-tag teal">Métier manuel</span></div>
+        <p class="card-desc">Apprentissage du diagnostic, de l'entretien et de la réparation des véhicules légers, moteur thermique et électrique.</p>
+        <div class="meta"><span>📍 Île-de-France</span><span>⏱ 2 ans, alternance</span></div>
+        <button type="button" class="card-link" onclick="handleApply(event, 'formation', 'CAP Mécanique Automobile')">Envoyer ma demande <span class="arrow">→</span></button>
+      </div>
+      <div class="card">
+        <div class="card-top"><h3>CAP Peinture en Bâtiment et Revêtements</h3><span class="card-tag teal">Métier manuel</span></div>
+        <p class="card-desc">Apprentissage des techniques de préparation des surfaces, de revêtement et de finition intérieure et extérieure des bâtiments.</p>
+        <div class="meta"><span>📍 Île-de-France</span><span>⏱ 1 an, temps plein</span></div>
+        <button type="button" class="card-link" onclick="handleApply(event, 'formation', 'CAP Peinture en Bâtiment et Revêtements')">Envoyer ma demande <span class="arrow">→</span></button>
+      </div>
+      <div class="card">
+        <div class="card-top"><h3>CQP Technicien de Maintenance Industrielle</h3><span class="card-tag teal">Certification</span></div>
+        <p class="card-desc">Certification qui forme à la maintenance préventive et curative des équipements de production dans un environnement industriel.</p>
+        <div class="meta"><span>📍 Île-de-France</span><span>⏱ 6 mois</span></div>
+        <button type="button" class="card-link" onclick="handleApply(event, 'formation', 'CQP Technicien de Maintenance Industrielle')">Envoyer ma demande <span class="arrow">→</span></button>
+      </div>
+    </div>
+
+    <p class="unlock-note">Un compte gratuit est nécessaire uniquement pour envoyer votre demande.</p>
+  </div>
+</section>
+
+<section class="listing gold-tint" id="emplois">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <h2>Offres d'emploi</h2>
+        <p>Des postes ouverts aux jeunes actifs, alternants et premières expériences — libre d'accès, sans inscription.</p>
+      </div>
+    </div>
+
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-top"><h3>Assistant(e) Marketing Digital</h3><span class="card-tag gold">CDD</span></div>
+        <div class="meta"><span>📍 Île-de-France</span></div>
+        <button type="button" class="card-link" onclick="handleApply(event, 'emploi', 'Assistant(e) Marketing Digital')">Envoyer ma candidature <span class="arrow">→</span></button>
+      </div>
+      <div class="card">
+        <div class="card-top"><h3>Technicien(ne) de Support Informatique</h3><span class="card-tag gold">CDI</span></div>
+        <div class="meta"><span>📍 Île-de-France</span></div>
+        <button type="button" class="card-link" onclick="handleApply(event, 'emploi', 'Technicien(ne) de Support Informatique')">Envoyer ma candidature <span class="arrow">→</span></button>
+      </div>
+      <div class="card">
+        <div class="card-top"><h3>Conseiller(e) Clientèle Junior</h3><span class="card-tag gold">CDD</span></div>
+        <div class="meta"><span>📍 Île-de-France</span></div>
+        <button type="button" class="card-link" onclick="handleApply(event, 'emploi', 'Conseiller(e) Clientèle Junior')">Envoyer ma candidature <span class="arrow">→</span></button>
+      </div>
+      <div class="card">
+        <div class="card-top"><h3>Stagiaire Chargé(e) de Projet Événementiel</h3><span class="card-tag gold">Stage</span></div>
+        <div class="meta"><span>📍 Île-de-France</span></div>
+        <button type="button" class="card-link" onclick="handleApply(event, 'emploi', 'Stagiaire Chargé(e) de Projet Événementiel')">Envoyer ma candidature <span class="arrow">→</span></button>
+      </div>
+      <div class="card">
+        <div class="card-top"><h3>Maçon(ne)</h3><span class="card-tag gold">CDI</span></div>
+        <div class="meta"><span>📍 Île-de-France</span></div>
+        <button type="button" class="card-link" onclick="handleApply(event, 'emploi', 'Maçon(ne)')">Envoyer ma candidature <span class="arrow">→</span></button>
+      </div>
+      <div class="card">
+        <div class="card-top"><h3>Plombier(ère) Chauffagiste</h3><span class="card-tag gold">CDI</span></div>
+        <div class="meta"><span>📍 Île-de-France</span></div>
+        <button type="button" class="card-link" onclick="handleApply(event, 'emploi', 'Plombier(ère) Chauffagiste')">Envoyer ma candidature <span class="arrow">→</span></button>
+      </div>
+      <div class="card">
+        <div class="card-top"><h3>Mécanicien(ne) Automobile</h3><span class="card-tag gold">CDD</span></div>
+        <div class="meta"><span>📍 Île-de-France</span></div>
+        <button type="button" class="card-link" onclick="handleApply(event, 'emploi', 'Mécanicien(ne) Automobile')">Envoyer ma candidature <span class="arrow">→</span></button>
+      </div>
+      <div class="card">
+        <div class="card-top"><h3>Peintre en Bâtiment</h3><span class="card-tag gold">CDD</span></div>
+        <div class="meta"><span>📍 Île-de-France</span></div>
+        <button type="button" class="card-link" onclick="handleApply(event, 'emploi', 'Peintre en Bâtiment')">Envoyer ma candidature <span class="arrow">→</span></button>
+      </div>
+    </div>
+
+    <p class="unlock-note">Un compte gratuit est nécessaire uniquement pour envoyer votre candidature.</p>
+  </div>
+</section>
+
+<section class="how" id="comment">
+  <div class="section-head">
+    <div>
+      <h2>Comment ça marche</h2>
+      <p>Trois étapes pour passer de la recherche à l'action.</p>
+    </div>
+  </div>
+  <div class="how-grid">
+    <div class="how-item">
+      <div class="num">01 — Créer un compte</div>
+      <h3>Inscrivez-vous en une minute</h3>
+      <p>Nom, e-mail, niveau d'études : l'essentiel pour vous proposer des contenus pertinents.</p>
+    </div>
+    <div class="how-item">
+      <div class="num">02 — Explorer</div>
+      <h3>Parcourez les formations et les offres</h3>
+      <p>Filtrez par domaine, niveau, ville ou type de contrat pour trouver ce qui vous correspond.</p>
+    </div>
+    <div class="how-item">
+      <div class="num">03 — Postuler</div>
+      <h3>Contactez directement notre organisme</h3>
+      <p>Un clic vous permet de candidater à une formation ou un offre d'emploi</p>
+    </div>
+  </div>
+</section>
+
+<section class="contact-section" id="contact">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <h2>Contact</h2>
+        <p>Une question sur une formation, une offre, ou votre compte ? Notre équipe vous répond.</p>
+      </div>
+    </div>
+    <div class="contact-grid">
+      <div class="contact-card">
+        <span class="contact-label">Téléphone</span>
+        <a href="tel:+33175344598" class="contact-value">+33 1 75 34 45 98</a>
+        <span class="contact-note">Du lundi au vendredi, 9h–18h</span>
+      </div>
+      <div class="contact-card">
+        <span class="contact-label">E-mail professionnel</span>
+        <a href="mailto:support.jeunesactifs@gmail.com" class="contact-value">support.jeunesactifs@gmail.com</a>
+        <span class="contact-note">Réponse dans les brefs délais</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="cta-banner">
+  <h2>Prêt à faire le premier pas ?</h2>
+  <p>Rejoignez les jeunes qui construisent déjà leur parcours grâce à Jeunes Actifs.</p>
+  <div class="btns">
+    <button class="btn btn-teal" onclick="openModal('signup')">Créer mon compte</button>
+    <button class="btn btn-outline" onclick="openModal('login')">Se connecter</button>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <button type="button" class="logo" onclick="scrollToTop()"><span class="mark"><span></span><span></span></span><span class="brand-name">Jeunes <span class="accent">Actifs</span></span></button>
+      <p>La plateforme qui relie formation et emploi pour les jeunes actifs de demain.</p>
+    </div>
+    <div class="footer-cols">
+      <div class="footer-col">
+        <h4>Explorer</h4>
+        <button type="button" class="text-link" onclick="scrollToSection('formations')">Formations</button>
+        <button type="button" class="text-link" onclick="scrollToSection('emplois')">Offres d'emploi</button>
+        <button type="button" class="text-link" onclick="scrollToSection('comment')">Comment ça marche</button>
+      </div>
+      <div class="footer-col">
+        <h4>À propos</h4>
+        <span class="text-link text-link-disabled">Notre mission</span>
+        <button type="button" class="text-link" onclick="scrollToSection('contact')">Contact</button>
+        <span class="text-link text-link-disabled">Partenaires</span>
+      </div>
+      <div class="footer-col">
+        <h4>Nous contacter</h4>
+        <a href="tel:+33175344598">+33 1 75 34 45 98</a>
+        <a href="mailto:support.jeunesactifs@gmail.com">support.jeunesactifs@gmail.com</a>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">© 2026 Jeunes Actifs. Tous droits réservés.</div>
+</footer>
+
+<!-- ---------- AUTH MODAL ---------- -->
+<div class="modal-backdrop hidden" id="modalBackdrop">
+  <div class="modal">
+    <div class="modal-head">
+      <h2 id="modalTitle">Créer un compte</h2>
+      <button class="modal-close" onclick="closeModal()" aria-label="Fermer">✕</button>
+    </div>
+    <p class="modal-sub" id="modalSub">Rejoignez Jeunes Actifs pour accéder aux formations et aux offres.</p>
+
+    <div class="modal-body">
+      <div class="modal-error" id="modalError"></div>
+
+      <!-- SIGNUP FORM -->
+      <form id="signupForm" onsubmit="handleSignup(event)">
+        <div class="field-row">
+          <div class="field">
+            <label for="su_prenom">Prénom</label>
+            <input type="text" id="su_prenom" required>
+          </div>
+          <div class="field">
+            <label for="su_nom">Nom</label>
+            <input type="text" id="su_nom" required>
+          </div>
+        </div>
+        <div class="field" style="margin-top:16px;">
+          <label for="su_email">E-mail</label>
+          <input type="email" id="su_email" required>
+        </div>
+        <div class="field" style="margin-top:16px;">
+          <label for="su_telephone">Téléphone</label>
+          <div style="display:flex;gap:8px;">
+            <select id="su_indicatif" style="flex:0 0 150px;"></select>
+            <input type="tel" id="su_telephone" placeholder="6 12 34 56 78" style="flex:1;" required>
+          </div>
+        </div>
+        <div class="field" style="margin-top:16px;">
+          <label for="su_password">Mot de passe</label>
+          <input type="password" id="su_password" minlength="6" required>
+        </div>
+        <div class="field-row" style="margin-top:16px;">
+          <div class="field">
+            <label for="su_niveau">Métier / niveau visé</label>
+            <select id="su_niveau" required>
+              <option value="">Choisir…</option>
+              <optgroup label="Filières académiques">
+                <option>BTS Techniques de Commercialisation</option>
+                <option>Bachelor Commerce</option>
+                <option>Master Management et Stratégie d'Entreprise</option>
+                <option>DEAES — Accompagnant Éducatif et Social</option>
+              </optgroup>
+              <optgroup label="Offres d'emploi">
+                <option>Assistant(e) Marketing Digital</option>
+                <option>Technicien(ne) de Support Informatique</option>
+                <option>Conseiller(e) Clientèle Junior</option>
+                <option>Stagiaire Chargé(e) de Projet Événementiel</option>
+                <option>Maçon(ne)</option>
+                <option>Plombier(ère) Chauffagiste</option>
+                <option>Mécanicien(ne) Automobile</option>
+                <option>Peintre en Bâtiment</option>
+              </optgroup>
+            </select>
+          </div>
+          <div class="field">
+            <label for="su_nationalite">Nationalité</label>
+            <select id="su_nationalite" required></select>
+          </div>
+        </div>
+        <button type="submit" class="btn btn-teal modal-submit" style="margin-top:20px;">Créer mon compte</button>
+        <p class="modal-switch" style="margin-top:14px;">Déjà inscrit(e) ? <button type="button" onclick="switchModal('login')">Se connecter</button></p>
+      </form>
+
+      <!-- LOGIN FORM -->
+      <form id="loginForm" class="hidden" onsubmit="handleLogin(event)">
+        <div class="field">
+          <label for="li_email">E-mail</label>
+          <input type="email" id="li_email" required>
+        </div>
+        <div class="field" style="margin-top:16px;">
+          <label for="li_password">Mot de passe</label>
+          <input type="password" id="li_password" required>
+        </div>
+        <p class="modal-switch" style="text-align:right;margin-top:8px;"><button type="button" onclick="switchModal('reset')">Mot de passe oublié ?</button></p>
+        <button type="submit" class="btn btn-teal modal-submit" style="margin-top:12px;">Se connecter</button>
+        <p class="modal-switch" style="margin-top:14px;">Pas encore de compte ? <button type="button" onclick="switchModal('signup')">S'inscrire</button></p>
+      </form>
+
+      <!-- RESET PASSWORD FORM - STEP 1 (email) -->
+      <form id="resetRequestForm" class="hidden" onsubmit="handleResetRequest(event)">
+        <div class="field">
+          <label for="rq_email">E-mail associé à votre compte</label>
+          <input type="email" id="rq_email" required>
+        </div>
+        <button type="submit" class="btn btn-teal modal-submit" style="margin-top:20px;">Continuer</button>
+        <p class="modal-switch" style="margin-top:14px;">Vous vous souvenez de votre mot de passe ? <button type="button" onclick="switchModal('login')">Se connecter</button></p>
+      </form>
+
+      <!-- RESET PASSWORD FORM - STEP 2 (new password) -->
+      <form id="resetSubmitForm" class="hidden" onsubmit="handleResetSubmit(event)">
+        <div class="field">
+          <label for="rs_password">Nouveau mot de passe</label>
+          <input type="password" id="rs_password" minlength="6" required>
+        </div>
+        <div class="field" style="margin-top:16px;">
+          <label for="rs_password_confirm">Confirmer le nouveau mot de passe</label>
+          <input type="password" id="rs_password_confirm" minlength="6" required>
+        </div>
+        <button type="submit" class="btn btn-teal modal-submit" style="margin-top:20px;">Réinitialiser le mot de passe</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- ---------- MES CANDIDATURES MODAL ---------- -->
+<div class="modal-backdrop hidden" id="applicationsBackdrop">
+  <div class="modal">
+    <div class="modal-head">
+      <h2>Mes candidatures</h2>
+      <button class="modal-close" onclick="closeApplicationsModal()" aria-label="Fermer">✕</button>
+    </div>
+    <p class="modal-sub">Toutes vos demandes de formation et candidatures envoyées.</p>
+    <div class="modal-body">
+      <div id="applicationsList"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ---------- TOAST ---------- -->
+<div class="toast" id="toast"></div>
+
+<script>
+  let currentUser = null;
+
+  function scrollToSection(id){
+    const el = document.getElementById(id);
+    if(el) el.scrollIntoView({behavior:'smooth', block:'start'});
+  }
+  function scrollToTop(){
+    window.scrollTo({top:0, behavior:'smooth'});
+  }
+
+  // Liste complète des pays (nom FR + indicatif téléphonique)
+  const COUNTRIES = [{"name": "Afghanistan", "alpha2": "AF", "dial": "+93"}, {"name": "Afrique du Sud", "alpha2": "ZA", "dial": "+27"}, {"name": "Albanie", "alpha2": "AL", "dial": "+355"}, {"name": "Algérie", "alpha2": "DZ", "dial": "+213"}, {"name": "Allemagne", "alpha2": "DE", "dial": "+49"}, {"name": "Andorre", "alpha2": "AD", "dial": "+376"}, {"name": "Angola", "alpha2": "AO", "dial": "+244"}, {"name": "Anguilla", "alpha2": "AI", "dial": "+1"}, {"name": "Antigua-et-Barbuda", "alpha2": "AG", "dial": "+1"}, {"name": "Arabie saoudite", "alpha2": "SA", "dial": "+966"}, {"name": "Argentine", "alpha2": "AR", "dial": "+54"}, {"name": "Arménie", "alpha2": "AM", "dial": "+374"}, {"name": "Aruba", "alpha2": "AW", "dial": "+297"}, {"name": "Australie", "alpha2": "AU", "dial": "+61"}, {"name": "Autriche", "alpha2": "AT", "dial": "+43"}, {"name": "Azerbaïdjan", "alpha2": "AZ", "dial": "+994"}, {"name": "Bahamas", "alpha2": "BS", "dial": "+1"}, {"name": "Bahreïn", "alpha2": "BH", "dial": "+973"}, {"name": "Bangladesh", "alpha2": "BD", "dial": "+880"}, {"name": "Barbade", "alpha2": "BB", "dial": "+1"}, {"name": "Belgique", "alpha2": "BE", "dial": "+32"}, {"name": "Belize", "alpha2": "BZ", "dial": "+501"}, {"name": "Bermudes", "alpha2": "BM", "dial": "+1"}, {"name": "Bhoutan", "alpha2": "BT", "dial": "+975"}, {"name": "Birmanie", "alpha2": "MM", "dial": "+95"}, {"name": "Bolivie, état plurinational de", "alpha2": "BO", "dial": "+591"}, {"name": "Bonaire, Saint-Eustache et Saba", "alpha2": "BQ", "dial": "+599"}, {"name": "Bosnie-Herzégovine", "alpha2": "BA", "dial": "+387"}, {"name": "Botswana", "alpha2": "BW", "dial": "+267"}, {"name": "Brunéi Darussalam", "alpha2": "BN", "dial": "+673"}, {"name": "Brésil", "alpha2": "BR", "dial": "+55"}, {"name": "Bulgarie", "alpha2": "BG", "dial": "+359"}, {"name": "Burkina Faso", "alpha2": "BF", "dial": "+226"}, {"name": "Burundi", "alpha2": "BI", "dial": "+257"}, {"name": "Bélarus", "alpha2": "BY", "dial": "+375"}, {"name": "Bénin", "alpha2": "BJ", "dial": "+229"}, {"name": "Cambodge", "alpha2": "KH", "dial": "+855"}, {"name": "Cameroun", "alpha2": "CM", "dial": "+237"}, {"name": "Canada", "alpha2": "CA", "dial": "+1"}, {"name": "Cap-Vert", "alpha2": "CV", "dial": "+238"}, {"name": "Chili", "alpha2": "CL", "dial": "+56"}, {"name": "Chine", "alpha2": "CN", "dial": "+86"}, {"name": "Christmas, Île", "alpha2": "CX", "dial": "+61"}, {"name": "Chypre", "alpha2": "CY", "dial": "+357"}, {"name": "Cocos (Keeling), Îles", "alpha2": "CC", "dial": "+61"}, {"name": "Colombie", "alpha2": "CO", "dial": "+57"}, {"name": "Comores", "alpha2": "KM", "dial": "+269"}, {"name": "Corée, République de", "alpha2": "KR", "dial": "+82"}, {"name": "Corée, République populaire démocratique de", "alpha2": "KP", "dial": "+850"}, {"name": "Costa Rica", "alpha2": "CR", "dial": "+506"}, {"name": "Croatie", "alpha2": "HR", "dial": "+385"}, {"name": "Cuba", "alpha2": "CU", "dial": "+53"}, {"name": "Curaçao", "alpha2": "CW", "dial": "+599"}, {"name": "Côte d'Ivoire", "alpha2": "CI", "dial": "+225"}, {"name": "Danemark", "alpha2": "DK", "dial": "+45"}, {"name": "Djibouti", "alpha2": "DJ", "dial": "+253"}, {"name": "Dominique", "alpha2": "DM", "dial": "+1"}, {"name": "Espagne", "alpha2": "ES", "dial": "+34"}, {"name": "Estonie", "alpha2": "EE", "dial": "+372"}, {"name": "Eswatini", "alpha2": "SZ", "dial": "+268"}, {"name": "Fidji", "alpha2": "FJ", "dial": "+679"}, {"name": "Finlande", "alpha2": "FI", "dial": "+358"}, {"name": "France", "alpha2": "FR", "dial": "+33"}, {"name": "Gabon", "alpha2": "GA", "dial": "+241"}, {"name": "Gambie", "alpha2": "GM", "dial": "+220"}, {"name": "Ghana", "alpha2": "GH", "dial": "+233"}, {"name": "Gibraltar", "alpha2": "GI", "dial": "+350"}, {"name": "Grenade", "alpha2": "GD", "dial": "+1"}, {"name": "Groënland", "alpha2": "GL", "dial": "+299"}, {"name": "Grèce", "alpha2": "GR", "dial": "+30"}, {"name": "Guadeloupe", "alpha2": "GP", "dial": "+590"}, {"name": "Guam", "alpha2": "GU", "dial": "+1"}, {"name": "Guatemala", "alpha2": "GT", "dial": "+502"}, {"name": "Guernesey", "alpha2": "GG", "dial": "+44"}, {"name": "Guinée", "alpha2": "GN", "dial": "+224"}, {"name": "Guinée Équatoriale", "alpha2": "GQ", "dial": "+240"}, {"name": "Guinée-Bissau", "alpha2": "GW", "dial": "+245"}, {"name": "Guyana", "alpha2": "GY", "dial": "+592"}, {"name": "Guyane française", "alpha2": "GF", "dial": "+594"}, {"name": "Géorgie", "alpha2": "GE", "dial": "+995"}, {"name": "Haïti", "alpha2": "HT", "dial": "+509"}, {"name": "Honduras", "alpha2": "HN", "dial": "+504"}, {"name": "Hong Kong", "alpha2": "HK", "dial": "+852"}, {"name": "Hongrie", "alpha2": "HU", "dial": "+36"}, {"name": "Inde", "alpha2": "IN", "dial": "+91"}, {"name": "Indonésie", "alpha2": "ID", "dial": "+62"}, {"name": "Irak", "alpha2": "IQ", "dial": "+964"}, {"name": "Iran, République islamique d'", "alpha2": "IR", "dial": "+98"}, {"name": "Irlande", "alpha2": "IE", "dial": "+353"}, {"name": "Islande", "alpha2": "IS", "dial": "+354"}, {"name": "Israël", "alpha2": "IL", "dial": "+972"}, {"name": "Italie", "alpha2": "IT", "dial": "+39"}, {"name": "Jamaïque", "alpha2": "JM", "dial": "+1"}, {"name": "Japon", "alpha2": "JP", "dial": "+81"}, {"name": "Jersey", "alpha2": "JE", "dial": "+44"}, {"name": "Jordanie", "alpha2": "JO", "dial": "+962"}, {"name": "Kazakhstan", "alpha2": "KZ", "dial": "+7"}, {"name": "Kenya", "alpha2": "KE", "dial": "+254"}, {"name": "Kirghizistan", "alpha2": "KG", "dial": "+996"}, {"name": "Kiribati", "alpha2": "KI", "dial": "+686"}, {"name": "Koweït", "alpha2": "KW", "dial": "+965"}, {"name": "Lao, République démocratique populaire", "alpha2": "LA", "dial": "+856"}, {"name": "Lesotho", "alpha2": "LS", "dial": "+266"}, {"name": "Lettonie", "alpha2": "LV", "dial": "+371"}, {"name": "Liban", "alpha2": "LB", "dial": "+961"}, {"name": "Libye", "alpha2": "LY", "dial": "+218"}, {"name": "Libéria", "alpha2": "LR", "dial": "+231"}, {"name": "Liechtenstein", "alpha2": "LI", "dial": "+423"}, {"name": "Lituanie", "alpha2": "LT", "dial": "+370"}, {"name": "Luxembourg", "alpha2": "LU", "dial": "+352"}, {"name": "Macau", "alpha2": "MO", "dial": "+853"}, {"name": "Macédoine du Nord", "alpha2": "MK", "dial": "+389"}, {"name": "Madagascar", "alpha2": "MG", "dial": "+261"}, {"name": "Malaisie", "alpha2": "MY", "dial": "+60"}, {"name": "Malawi", "alpha2": "MW", "dial": "+265"}, {"name": "Maldives", "alpha2": "MV", "dial": "+960"}, {"name": "Mali", "alpha2": "ML", "dial": "+223"}, {"name": "Malouines, Îles (Falkland)", "alpha2": "FK", "dial": "+500"}, {"name": "Malte", "alpha2": "MT", "dial": "+356"}, {"name": "Maroc", "alpha2": "MA", "dial": "+212"}, {"name": "Martinique", "alpha2": "MQ", "dial": "+596"}, {"name": "Maurice", "alpha2": "MU", "dial": "+230"}, {"name": "Mauritanie", "alpha2": "MR", "dial": "+222"}, {"name": "Mayotte", "alpha2": "YT", "dial": "+262"}, {"name": "Mexique", "alpha2": "MX", "dial": "+52"}, {"name": "Micronésie, États fédérés de", "alpha2": "FM", "dial": "+691"}, {"name": "Moldova, République de", "alpha2": "MD", "dial": "+373"}, {"name": "Monaco", "alpha2": "MC", "dial": "+377"}, {"name": "Mongolie", "alpha2": "MN", "dial": "+976"}, {"name": "Montserrat", "alpha2": "MS", "dial": "+1"}, {"name": "Monténégro", "alpha2": "ME", "dial": "+382"}, {"name": "Mozambique", "alpha2": "MZ", "dial": "+258"}, {"name": "Namibie", "alpha2": "NA", "dial": "+264"}, {"name": "Nauru", "alpha2": "NR", "dial": "+674"}, {"name": "Nicaragua", "alpha2": "NI", "dial": "+505"}, {"name": "Niger", "alpha2": "NE", "dial": "+227"}, {"name": "Nigeria", "alpha2": "NG", "dial": "+234"}, {"name": "Nioue", "alpha2": "NU", "dial": "+683"}, {"name": "Norvège", "alpha2": "NO", "dial": "+47"}, {"name": "Nouvelle-Calédonie", "alpha2": "NC", "dial": "+687"}, {"name": "Nouvelle-Zélande", "alpha2": "NZ", "dial": "+64"}, {"name": "Népal", "alpha2": "NP", "dial": "+977"}, {"name": "Oman", "alpha2": "OM", "dial": "+968"}, {"name": "Ouganda", "alpha2": "UG", "dial": "+256"}, {"name": "Ouzbékistan", "alpha2": "UZ", "dial": "+998"}, {"name": "Pakistan", "alpha2": "PK", "dial": "+92"}, {"name": "Palaos", "alpha2": "PW", "dial": "+680"}, {"name": "Palestine, État de", "alpha2": "PS", "dial": "+970"}, {"name": "Panama", "alpha2": "PA", "dial": "+507"}, {"name": "Papouasie-Nouvelle-Guinée", "alpha2": "PG", "dial": "+675"}, {"name": "Paraguay", "alpha2": "PY", "dial": "+595"}, {"name": "Pays-Bas", "alpha2": "NL", "dial": "+31"}, {"name": "Philippines", "alpha2": "PH", "dial": "+63"}, {"name": "Pologne", "alpha2": "PL", "dial": "+48"}, {"name": "Polynésie française", "alpha2": "PF", "dial": "+689"}, {"name": "Porto Rico", "alpha2": "PR", "dial": "+1"}, {"name": "Portugal", "alpha2": "PT", "dial": "+351"}, {"name": "Pérou", "alpha2": "PE", "dial": "+51"}, {"name": "Qatar", "alpha2": "QA", "dial": "+974"}, {"name": "Roumanie", "alpha2": "RO", "dial": "+40"}, {"name": "Royaume-Uni", "alpha2": "GB", "dial": "+44"}, {"name": "Russie, Fédération de", "alpha2": "RU", "dial": "+7"}, {"name": "Rwanda", "alpha2": "RW", "dial": "+250"}, {"name": "République centrafricaine", "alpha2": "CF", "dial": "+236"}, {"name": "République dominicaine", "alpha2": "DO", "dial": "+1"}, {"name": "République du Congo", "alpha2": "CG", "dial": "+242"}, {"name": "République démocratique du Congo", "alpha2": "CD", "dial": "+243"}, {"name": "Réunion, Île de la", "alpha2": "RE", "dial": "+262"}, {"name": "Sahara occidental", "alpha2": "EH", "dial": "+212"}, {"name": "Saint-Barthélemy", "alpha2": "BL", "dial": "+590"}, {"name": "Saint-Christophe-et-Niévès", "alpha2": "KN", "dial": "+1"}, {"name": "Saint-Marin", "alpha2": "SM", "dial": "+378"}, {"name": "Saint-Martin (partie française)", "alpha2": "MF", "dial": "+590"}, {"name": "Saint-Martin (partie néerlandaise)", "alpha2": "SX", "dial": "+1"}, {"name": "Saint-Pierre-et-Miquelon", "alpha2": "PM", "dial": "+508"}, {"name": "Saint-Siège (état de la cité du Vatican)", "alpha2": "VA", "dial": "+39"}, {"name": "Saint-Vincent-et-les-Grenadines", "alpha2": "VC", "dial": "+1"}, {"name": "Sainte-Hélène, Ascension et Tristan da Cunha", "alpha2": "SH", "dial": "+290"}, {"name": "Sainte-Lucie", "alpha2": "LC", "dial": "+1"}, {"name": "Salomon, Îles", "alpha2": "SB", "dial": "+677"}, {"name": "Salvador", "alpha2": "SV", "dial": "+503"}, {"name": "Samoa", "alpha2": "WS", "dial": "+685"}, {"name": "Samoa américaines", "alpha2": "AS", "dial": "+1"}, {"name": "Sao Tomé-et-Principe", "alpha2": "ST", "dial": "+239"}, {"name": "Serbie", "alpha2": "RS", "dial": "+381"}, {"name": "Seychelles", "alpha2": "SC", "dial": "+248"}, {"name": "Sierra Leone", "alpha2": "SL", "dial": "+232"}, {"name": "Singapour", "alpha2": "SG", "dial": "+65"}, {"name": "Slovaquie", "alpha2": "SK", "dial": "+421"}, {"name": "Slovénie", "alpha2": "SI", "dial": "+386"}, {"name": "Somalie", "alpha2": "SO", "dial": "+252"}, {"name": "Soudan", "alpha2": "SD", "dial": "+249"}, {"name": "Soudan du Sud", "alpha2": "SS", "dial": "+211"}, {"name": "Sri Lanka", "alpha2": "LK", "dial": "+94"}, {"name": "Suisse", "alpha2": "CH", "dial": "+41"}, {"name": "Surinam", "alpha2": "SR", "dial": "+597"}, {"name": "Suède", "alpha2": "SE", "dial": "+46"}, {"name": "Svalbard et île Jan Mayen", "alpha2": "SJ", "dial": "+47"}, {"name": "Syrienne, République arabe", "alpha2": "SY", "dial": "+963"}, {"name": "Sénégal", "alpha2": "SN", "dial": "+221"}, {"name": "Tadjikistan", "alpha2": "TJ", "dial": "+992"}, {"name": "Tanzanie, République unie de", "alpha2": "TZ", "dial": "+255"}, {"name": "Taïwan, province de Chine", "alpha2": "TW", "dial": "+886"}, {"name": "Tchad", "alpha2": "TD", "dial": "+235"}, {"name": "Tchéquie", "alpha2": "CZ", "dial": "+420"}, {"name": "Territoire britannique de l'océan Indien", "alpha2": "IO", "dial": "+246"}, {"name": "Thaïlande", "alpha2": "TH", "dial": "+66"}, {"name": "Timor oriental", "alpha2": "TL", "dial": "+670"}, {"name": "Togo", "alpha2": "TG", "dial": "+228"}, {"name": "Tokelau", "alpha2": "TK", "dial": "+690"}, {"name": "Tonga", "alpha2": "TO", "dial": "+676"}, {"name": "Trinité-et-Tobago", "alpha2": "TT", "dial": "+1"}, {"name": "Tunisie", "alpha2": "TN", "dial": "+216"}, {"name": "Turkménistan", "alpha2": "TM", "dial": "+993"}, {"name": "Turquie", "alpha2": "TR", "dial": "+90"}, {"name": "Tuvalu", "alpha2": "TV", "dial": "+688"}, {"name": "Ukraine", "alpha2": "UA", "dial": "+380"}, {"name": "Uruguay", "alpha2": "UY", "dial": "+598"}, {"name": "Vanuatu", "alpha2": "VU", "dial": "+678"}, {"name": "Viêt Nam", "alpha2": "VN", "dial": "+84"}, {"name": "Vénézuela, république bolivarienne du", "alpha2": "VE", "dial": "+58"}, {"name": "Wallis et Futuna", "alpha2": "WF", "dial": "+681"}, {"name": "Yémen", "alpha2": "YE", "dial": "+967"}, {"name": "Zambie", "alpha2": "ZM", "dial": "+260"}, {"name": "Zimbabwe", "alpha2": "ZW", "dial": "+263"}, {"name": "Åland, Îles", "alpha2": "AX", "dial": "+358"}, {"name": "Égypte", "alpha2": "EG", "dial": "+20"}, {"name": "Émirats arabes unis", "alpha2": "AE", "dial": "+971"}, {"name": "Équateur", "alpha2": "EC", "dial": "+593"}, {"name": "Érythrée", "alpha2": "ER", "dial": "+291"}, {"name": "États-Unis", "alpha2": "US", "dial": "+1"}, {"name": "Éthiopie", "alpha2": "ET", "dial": "+251"}, {"name": "Île Norfolk", "alpha2": "NF", "dial": "+672"}, {"name": "Île de Man", "alpha2": "IM", "dial": "+44"}, {"name": "Îles Caïmans", "alpha2": "KY", "dial": "+1"}, {"name": "Îles Cook", "alpha2": "CK", "dial": "+682"}, {"name": "Îles Féroé", "alpha2": "FO", "dial": "+298"}, {"name": "Îles Mariannes du Nord", "alpha2": "MP", "dial": "+1"}, {"name": "Îles Marshall", "alpha2": "MH", "dial": "+692"}, {"name": "Îles Turques-et-Caïques", "alpha2": "TC", "dial": "+1"}, {"name": "Îles Vierges britanniques", "alpha2": "VG", "dial": "+1"}, {"name": "Îles Vierges, États-Unis", "alpha2": "VI", "dial": "+1"}];
+
+  function populateCountrySelects(){
+    const indicatifSelect = document.getElementById('su_indicatif');
+    const nationaliteSelect = document.getElementById('su_nationalite');
+
+    indicatifSelect.innerHTML = COUNTRIES.map(c =>
+      `<option value="${c.dial}" data-name="${c.name}">${c.name} (${c.dial})</option>`
+    ).join('');
+    nationaliteSelect.innerHTML = COUNTRIES.map(c =>
+      `<option value="${c.name}">${c.name}</option>`
+    ).join('');
+
+    indicatifSelect.value = '+33';
+    nationaliteSelect.value = 'France';
+  }
+
+  function encode(str){ return btoa(unescape(encodeURIComponent(str))); }
+
+  let pendingApplication = null;
+
+  function handleApply(event, type, title){
+    event.preventDefault();
+    if(!currentUser){
+      pendingApplication = { type, title };
+      openModal('signup');
+      const msg = type === 'emploi'
+        ? "Créez un compte gratuit pour envoyer votre candidature."
+        : "Créez un compte gratuit pour envoyer votre demande de formation.";
+      document.getElementById('modalSub').textContent = msg;
+      return;
+    }
+    saveApplication(type, title);
+  }
+
+  async function handleSignup(e){
+  e.preventDefault();
+  clearError();
+
+  const prenom = document.getElementById('su_prenom').value.trim();
+  const nom = document.getElementById('su_nom').value.trim();
+  const email = document.getElementById('su_email').value.trim().toLowerCase();
+  const indicatif = document.getElementById('su_indicatif').value;
+  const telephoneNum = document.getElementById('su_telephone').value.trim();
+  const telephone = telephoneNum ? `${indicatif} ${telephoneNum}` : '';
+  const password = document.getElementById('su_password').value;
+  const niveau = document.getElementById('su_niveau').value;
+  const nationalite = document.getElementById('su_nationalite').value.trim();
+
+  if(!prenom || !nom || !email || !telephoneNum || !password || !niveau || !nationalite){
+    showError("Merci de remplir tous les champs.");
+    return;
+  }
+  if(password.length < 8){
+    showError("Le mot de passe doit contenir au moins 8 caractères.");
+    return;
+  }
+
+  try{
+    const response = await fetch('http://localhost:3000/signup', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ prenom, nom, email, telephone, password, niveau, nationalite })
+    });
+    const data = await response.json();
+
+    if(!response.ok){
+      showError(data.error || "Une erreur est survenue, merci de réessayer.");
+      return;
+    }
+
+    currentUser = { id: data.id, prenom, nom, email, telephone, niveau, nationalite };
+    onAuthSuccess();
+  }catch(err){
+    console.error(err);
+    showError("Impossible de créer le compte pour le moment. Réessayez.");
+  }
+}
+
+async function handleLogin(e){
+  e.preventDefault();
+  clearError();
+
+  const email = document.getElementById('li_email').value.trim().toLowerCase();
+  const password = document.getElementById('li_password').value;
+
+  if(!email || !password){
+    showError("Merci de remplir tous les champs.");
+    return;
+  }
+
+  try{
+    const response = await fetch('http://localhost:3000/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({ email, password })
+    });
+    const data = await response.json();
+
+    if(!response.ok){
+      showError(data.error || "Identifiants incorrects.");
+      return;
+    }
+
+    currentUser = data.account;
+    onAuthSuccess();
+  }catch(err){
+    console.error(err);
+    showError("Une erreur est survenue, merci de réessayer.");
+  }
+}
+
+function showToast(message){
+  const toast = document.getElementById('toast');
+  toast.textContent = message;
+  toast.classList.add('show');
+  clearTimeout(showToast._timer);
+  showToast._timer = setTimeout(() => toast.classList.remove('show'), 3000);
+}
+
+async function saveApplication(type, title){
+  try{
+    const response = await fetch('http://localhost:3000/apply', {
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ type, title })
+    });
+    const data = await response.json();
+
+    if(!response.ok){
+      showToast(data.error || "Une erreur est survenue, merci de réessayer.");
+      return;
+    }
+
+    showToast(type === 'emploi'
+      ? `Candidature envoyée pour « ${title} ».`
+      : `Demande envoyée pour « ${title} ».`);
+  }catch(err){
+    console.error(err);
+    showToast("Une erreur est survenue, merci de réessayer.");
+  }
+}
+
+async function openApplicationsModal(){
+  document.getElementById('applicationsBackdrop').classList.remove('hidden');
+  const listEl = document.getElementById('applicationsList');
+  listEl.innerHTML = '<p class="applications-empty">Chargement...</p>';
+
+  try{
+    const response = await fetch('http://localhost:3000/applications', {
+      credentials: 'include'
+    });
+    const data = await response.json();
+
+    if(!response.ok){
+      listEl.innerHTML = '<p class="applications-empty">Impossible de charger vos candidatures.</p>';
+      return;
+    }
+
+    const list = data.applications;
+    if(list.length === 0){
+      listEl.innerHTML = '<p class="applications-empty">Vous n\'avez encore envoyé aucune demande.</p>';
+      return;
+    }
+
+    listEl.innerHTML = list.map(item => {
+      const d = new Date(item.created_at);
+      const dateStr = d.toLocaleDateString('fr-FR', { day:'2-digit', month:'2-digit', year:'numeric' });
+      const tagClass = item.type === 'emploi' ? 'gold' : 'teal';
+      const tagLabel = item.type === 'emploi' ? 'Emploi' : 'Formation';
+      return `<div class="application-item">
+        <div class="application-top">
+          <span class="card-tag ${tagClass}">${tagLabel}</span>
+        </div>
+        <h3>${item.title}</h3>
+      </div>`;
+    }).join('');
+  }catch(err){
+    console.error(err);
+    listEl.innerHTML = '<p class="applications-empty">Impossible de charger vos candidatures.</p>';
+  }
+}
+  function closeApplicationsModal(){
+    document.getElementById('applicationsBackdrop').classList.add('hidden');
+  }
+
+  function showError(msg){
+    const el = document.getElementById('modalError');
+    el.textContent = msg;
+    el.classList.add('show');
+  }
+  function clearError(){
+    const el = document.getElementById('modalError');
+    el.textContent = '';
+    el.classList.remove('show');
+  }
+
+  function openModal(type){
+    document.getElementById('modalBackdrop').classList.remove('hidden');
+    switchModal(type);
+  }
+  function closeModal(){
+    document.getElementById('modalBackdrop').classList.add('hidden');
+    clearError();
+  }
+  function switchModal(type){
+    clearError();
+    document.getElementById('signupForm').classList.toggle('hidden', type !== 'signup');
+    document.getElementById('loginForm').classList.toggle('hidden', type !== 'login');
+    document.getElementById('resetRequestForm').classList.toggle('hidden', type !== 'reset');
+    document.getElementById('resetSubmitForm').classList.add('hidden');
+
+    const titles = {
+      signup: 'Créer un compte',
+      login: 'Se connecter',
+      reset: 'Mot de passe oublié'
+    };
+    const subs = {
+      signup: "Rejoignez Jeunes Actifs pour accéder aux formations et aux offres.",
+      login: "Content de vous revoir sur Jeunes Actifs.",
+      reset: "Indiquez votre e-mail pour réinitialiser votre mot de passe."
+    };
+    document.getElementById('modalTitle').textContent = titles[type];
+    document.getElementById('modalSub').textContent = subs[type];
+  }
+
+  let resetEmail = null;
+  let resetToken = null;
+
+  window.addEventListener('DOMContentLoaded', () => {
+  const params = new URLSearchParams(window.location.search);
+  const tokenFromUrl = params.get('resetToken');
+
+  if (tokenFromUrl) {
+    resetToken = tokenFromUrl;
+    document.getElementById('signupForm').classList.add('hidden');
+    document.getElementById('loginForm').classList.add('hidden');
+    document.getElementById('resetRequestForm').classList.add('hidden');
+    document.getElementById('resetSubmitForm').classList.remove('hidden');
+    document.getElementById('modalTitle').textContent = "Réinitialiser le mot de passe";
+    document.getElementById('modalSub').textContent = "Choisissez un nouveau mot de passe";
+    document.getElementById('modalBackdrop').classList.remove('hidden');
+  }
+});
+
+  async function handleResetRequest(e){
+    e.preventDefault();
+    clearError();
+    const email = document.getElementById('rq_email').value.trim().toLowerCase();
+    if(!email){
+      showError("Merci de renseigner votre e-mail.");
+      return;
+    }
+    try{
+      const response = await fetch('http://localhost:3000/reset-request', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email })
+    });
+    const data = await response.json();
+ 
+    if(!response.ok){
+      showError(data.error || "Aucun compte ne correspond à cet e-mail.");
+      return;
+      }
+
+     resetEmail = email;
+     document.getElementById('resetRequestForm').classList.add('hidden');
+     document.getElementById('modalSub').textContent = "Un email vous a été envoyé. Cliquez sur le lien qu'il contient pour continuer."; 
+    }catch(err){
+      console.error(err);
+      showError("Une erreur est survenue, merci de réessayer.");
+    }
+  }
+
+  async function handleResetSubmit(e){
+    e.preventDefault();
+    clearError();
+    const password = document.getElementById('rs_password').value;
+    const confirm = document.getElementById('rs_password_confirm').value;
+
+    if(password.length < 8){
+      showError("Le mot de passe doit contenir au moins 8 caractères.");
+      return;
+    }
+    if(password !== confirm){
+      showError("Les deux mots de passe ne correspondent pas.");
+      return;
+    }
+
+    try{
+    
+    const response = await fetch('http://localhost:3000/reset-submit', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ token: resetToken, password, confirm })
+    });
+    const data = await response.json();
+ 
+    if(!response.ok){
+      showError(data.error || "Une erreur est survenue, merci de réessayer.");
+      return;
+    }
+ 
+    document.getElementById('resetRequestForm').reset();
+    document.getElementById('resetSubmitForm').reset();
+    resetEmail = null;
+    switchModal('login');
+    showToast("Mot de passe mis à jour. Vous pouvez vous connecter.");
+  }catch(err){
+    console.error(err);
+    showError("Une erreur est survenue, merci de réessayer.");
+  }
+}
+
+  function onAuthSuccess(){
+    closeModal();
+    document.getElementById('signupForm').reset();
+    document.getElementById('loginForm').reset();
+    renderAuthState();
+    if(pendingApplication){
+      saveApplication(pendingApplication.type, pendingApplication.title);
+      pendingApplication = null;
+    }
+  }
+
+  async function logout(){
+  try{
+    await fetch('http://localhost:3000/logout', {
+      method: 'POST',
+      credentials: 'include'
+    });
+  }catch(err){
+    console.error(err);
+  }
+  currentUser = null;
+  renderAuthState();
+}
+  
+  function renderAuthState(){
+    const loggedIn = !!currentUser;
+    document.getElementById('loggedOutControls').classList.toggle('hidden', loggedIn);
+    document.getElementById('loggedInControls').classList.toggle('hidden', !loggedIn);
+    document.getElementById('heroActions').classList.toggle('hidden', loggedIn);
+
+    document.querySelectorAll('.gated').forEach(section => {
+      section.classList.toggle('gated', !loggedIn);
+    });
+
+    if(loggedIn){
+      document.getElementById('userName').textContent = currentUser.prenom + ' ' + currentUser.nom;
+      document.getElementById('userInitial').textContent = (currentUser.prenom[0] || '').toUpperCase();
+    }
+  }
+
+  async function restoreSession(){
+  try{
+    const response = await fetch('http://localhost:3000/session', {
+      credentials: 'include'
+    });
+    if(response.ok){
+      const data = await response.json();
+      currentUser = data.account;
+    }else{
+      currentUser = null;
+    }
+  }catch(err){
+    currentUser = null;
+  }
+  renderAuthState();
+}
+
+  document.getElementById('modalBackdrop').addEventListener('click', (e) => {
+    if(e.target.id === 'modalBackdrop') closeModal();
+  });
+  document.addEventListener('keydown', (e) => {
+    if(e.key === 'Escape') closeModal();
+  });
+
+  populateCountrySelects();
+  restoreSession();
+</script>
+
+</body>
+</html>
