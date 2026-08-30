@@ -1,13 +1,11 @@
 const express = require('express');
-const sqlite3 = require('sqlite3').verbose();
+const Database = require('better-sqlite3');
 const crypto = require('crypto');
 const cors = require('cors');
 const session = require('express-session');
 const nodemailer = require('nodemailer');
-const rateLimit = require('express-rate-limit'); 
+ 
 const app = express();
-
-app.use(express.static(__dirname));
  
 app.use(cors({
   origin: true,
@@ -19,46 +17,31 @@ app.use(session({
   resave: false,
   saveUninitialized: false
 }));
-
+ 
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
     user: 'support.jeunesactifs@gmail.com',
-    pass: 'nvzqlcooyiwmzoo'
+    pass: 'COLLE_TON_CODE_ICI'
   }
 });
-
-function sendResetEmail(toEmail, resetLink) {
-  return transporter.sendMail({
-    from: '"Jeunes Actifs" <support.jeunesactifs@gmail.com>',
-    to: toEmail,
-    subject: 'Réinitialisation de votre mot de passe',
-    html: `
-      <p>Vous avez demandé une réinitialisation de votre mot de passe.</p>
-      <p><a href="${resetLink}">Cliquez ici pour confirmer</a> (valable 30 minutes).</p>
-      <p>Si vous n'êtes pas à l'origine de cette demande, ignorez cet email.</p>
-    `
-  });
-}
-
-const db = new sqlite3.Database('./zerdi.db');
  
-db.serialize(() => {
-  db.run(`
-    CREATE TABLE IF NOT EXISTS accounts (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      prenom TEXT,
-      nom TEXT,
-      email TEXT,
-      telephone TEXT,
-      password TEXT,
-      niveau TEXT,
-      nationalite TEXT
-    )
-  `);
-});
-
-db.run(`
+const db = new Database('./database.db');
+ 
+db.exec(`
+  CREATE TABLE IF NOT EXISTS accounts (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    prenom TEXT,
+    nom TEXT,
+    email TEXT,
+    telephone TEXT,
+    password TEXT,
+    niveau TEXT,
+    nationalite TEXT
+  )
+`);
+ 
+db.exec(`
   CREATE TABLE IF NOT EXISTS reset_tokens (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     email TEXT,
@@ -68,57 +51,50 @@ db.run(`
     created_at INTEGER
   )
 `);
-
-db.run(`
-  CREATE TABLE IF NOT EXISTS applications (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    email TEXT,
-    type TEXT,
-    title TEXT,
-    created_at INTEGER
-  )
-`);
  
 function encodePassword(password) {
   return crypto.createHash('sha256').update(password).digest('hex');
 }
-
+ 
+// ------------------------------------------------------------------
+// SIGNUP — vulnérable
+// ------------------------------------------------------------------
 app.post('/signup', (req, res) => {
   const { prenom, nom, email, telephone, password, niveau, nationalite } = req.body;
  
   if (!prenom || !nom || !email || !telephone || !password || !niveau || !nationalite) {
     return res.status(400).json({ error: "Merci de remplir tous les champs." });
   }
-  if (password.length < 8) {
-    return res.status(400).json({ error: "Le mot de passe doit contenir au moins 8 caractères." });
+  if (password.length < 6) {
+    return res.status(400).json({ error: "Le mot de passe doit contenir au moins 6 caractères." });
   }
  
- 
-  const checkQuery = `SELECT * FROM accounts WHERE email = '${email}'`;
- 
-  db.get(checkQuery, (err, row) => {
-    if (err) {
-      console.error(err);
-      return res.status(500).json({ error: "Impossible de créer le compte pour le moment. Réessayez." });
-    }
-    if (row) {
+  try {
+    // 🚨 VULNÉRABLE
+    const existing = db.prepare(`SELECT * FROM accounts WHERE email = '${email}'`).get();
+    if (existing) {
       return res.status(400).json({ error: "Un compte existe déjà avec cet e-mail." });
     }
  
+    const hashedPassword = encodePassword(password);
+ 
+    // 🚨 VULNÉRABLE
     const insertQuery = `
       INSERT INTO accounts (prenom, nom, email, telephone, password, niveau, nationalite)
-      VALUES ('${prenom}', '${nom}', '${email}', '${telephone}', '${password}', '${niveau}', '${nationalite}')
+      VALUES ('${prenom}', '${nom}', '${email}', '${telephone}', '${hashedPassword}', '${niveau}', '${nationalite}')
     `;
+    const result = db.prepare(insertQuery).run();
  
-    db.run(insertQuery, function (err) {
-      if (err) {
-        console.error(err);
-        return res.status(500).json({ error: "Impossible de créer le compte pour le moment. Réessayez." });
-      }
-      return res.json({ success: true, id: this.lastID });
-    });
-  });
+    return res.json({ success: true, id: result.lastInsertRowid });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ error: "Impossible de créer le compte pour le moment. Réessayez." });
+  }
 });
+ 
+// ------------------------------------------------------------------
+// LOGIN — vulnérable
+// ------------------------------------------------------------------
 app.post('/login', (req, res) => {
   const { email, password } = req.body;
  
@@ -126,119 +102,125 @@ app.post('/login', (req, res) => {
     return res.status(400).json({ error: "Merci de remplir tous les champs." });
   }
  
+  try {
+    const hashedPassword = encodePassword(password);
  
-  const loginQuery = `
-    SELECT * FROM accounts
-    WHERE email = '${email}' AND password = '${password}'
-  `;
+    // 🚨 VULNÉRABLE
+    const loginQuery = `SELECT * FROM accounts WHERE email = '${email}' AND password = '${hashedPassword}'`;
+    const row = db.prepare(loginQuery).get();
  
-  db.get(loginQuery, (err, row) => {
-    if (err) {
-      console.error(err);
-      return res.status(500).json({ error: "Erreur serveur." });
-    }
     if (!row) {
       return res.status(401).json({ error: "Identifiants incorrects." });
     }
+ 
     req.session.email = row.email;
     return res.json({ success: true, account: row });
-  });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ error: "Erreur serveur." });
+  }
 });
-
+ 
+// ------------------------------------------------------------------
+// RESET REQUEST — vulnérable
+// ------------------------------------------------------------------
 app.post('/reset-request', (req, res) => {
   const { email } = req.body;
-
+ 
   if (!email) {
-    return res.status(400).json({ error: 'Merci de renseigner votre email.' });
-  } 
-  const query = `SELECT * FROM accounts WHERE email = '${email}'`;
-
-  db.get(query, (err, row) => {
-    if (err) {
-      console.error(err);
-      return res.status(500).json({ error: 'Une erreur est survenue.' });
-    }
-  
-    if (!row) {
-      return res.status(404).json({ error: 'Aucun compte trouvé avec cet email.' });
-    }
-
-    const token = crypto.randomBytes(32).toString('hex');
-    const createdAt = Date.now();
-
-    const insertQuery = `
-      INSERT INTO reset_tokens (token, email, created_at, used, confirmed)
-      VALUES ('${token}', '${email}', ${createdAt}, 0, 0)
-    `;
-    
-
-    db.run(insertQuery, (insertErr) => {
-      if (insertErr) {
-        console.error(insertErr);
-        return res.status(500).json({ error: 'Une erreur est survenue.' });
-      }
-
-      const resetLink = `http://localhost:3000/reset-confirm?token=${token}&answer=yes`;
-      
-          sendResetEmail(row.email, resetLink)
-      .then(() => res.status(200).json({ message: 'Si ce compte existe, un email a été envoyé.' }))
-      .catch((mailErr) => {
-        console.error(mailErr);
-        return res.status(200).json({ message: 'Si ce compte existe, un email a été envoyé.' });
+    return res.status(400).json({ error: "Merci de renseigner votre e-mail." });
+  }
+ 
+  try {
+    // 🚨 VULNÉRABLE
+    const row = db.prepare(`SELECT * FROM accounts WHERE email = '${email}'`).get();
+ 
+    if (row) {
+      const token = crypto.randomBytes(32).toString('hex');
+      const createdAt = Date.now();
+ 
+      db.prepare('INSERT INTO reset_tokens (email, token, confirmed, used, created_at) VALUES (?, ?, 0, 0, ?)')
+        .run(email, token, createdAt);
+ 
+      const confirmYesUrl = `https://jeunes-actifs.onrender.com/reset-confirm?token=${token}&answer=yes`;
+      const confirmNoUrl = `https://jeunes-actifs.onrender.com/reset-confirm?token=${token}&answer=no`;
+ 
+      const mailOptions = {
+        from: 'support.jeunesactifs@gmail.com',
+        to: email,
+        subject: 'Confirmation de réinitialisation de mot de passe — Jeunes Actifs',
+        text: `Bonjour,
+ 
+Une demande de réinitialisation de mot de passe a été effectuée pour ce compte sur Jeunes Actifs.
+ 
+Si vous êtes à l'origine de cette demande, cliquez ici pour confirmer :
+${confirmYesUrl}
+ 
+Si vous n'êtes pas à l'origine de cette demande, cliquez ici :
+${confirmNoUrl}
+ 
+Ce lien expire dans 30 minutes.
+ 
+L'équipe Jeunes Actifs`
+      };
+ 
+      transporter.sendMail(mailOptions, (mailErr) => {
+        if (mailErr) console.error('Erreur envoi email:', mailErr);
       });
-  });
+    }
+ 
+    return res.json({ success: true });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ error: "Une erreur est survenue, merci de réessayer." });
+  }
 });
-});
-
+ 
+// ------------------------------------------------------------------
+// RESET CONFIRM
+// ------------------------------------------------------------------
 app.get('/reset-confirm', (req, res) => {
   const { token, answer } = req.query;
+ 
   if (!token || !answer) {
     return res.status(400).send('Lien invalide.');
   }
-
-  const query = `SELECT * FROM reset_tokens WHERE token = '${token}' AND used = 0`;
-
-  db.get(query, (err, row) => {
-    if (err) {
-      console.error(err);
-      return res.status(500).send('Une erreur est survenue.');
-    }
+ 
+  try {
+    const row = db.prepare('SELECT * FROM reset_tokens WHERE token = ? AND used = 0').get(token);
+ 
     if (!row) {
       return res.status(404).send('Ce lien est invalide ou a déjà été utilisé.');
     }
-
+ 
     const THIRTY_MINUTES = 30 * 60 * 1000;
     if (Date.now() - row.created_at > THIRTY_MINUTES) {
       return res.status(410).send('Ce lien a expiré. Merci de refaire une demande de réinitialisation.');
     }
-
+ 
     if (answer === 'no') {
-      const cancelQuery = `UPDATE reset_tokens SET used = 1 WHERE token = '${token}'`;
-      db.run(cancelQuery, () => {
-        return res.send('Merci. Cette demande a été annulée, votre mot de passe reste inchangé.');
-      });
-      return;
+      db.prepare('UPDATE reset_tokens SET used = 1 WHERE token = ?').run(token);
+      return res.send('Merci. Cette demande a été annulée, votre mot de passe reste inchangé.');
     }
-
+ 
     if (answer === 'yes') {
-      const confirmQuery = `UPDATE reset_tokens SET confirmed = 1 WHERE token = '${token}'`;
-      db.run(confirmQuery, (updateErr) => {
-        if (updateErr) {
-          console.error(updateErr);
-          return res.status(500).send('Une erreur est survenue.');
-        }
-        return res.redirect(`http://localhost:3000/jeunes-actifs.html?resetToken=${token}`);
-      });
-      return;
+      db.prepare('UPDATE reset_tokens SET confirmed = 1 WHERE token = ?').run(token);
+      return res.redirect(`https://jeunes-actifs.onrender.com/jeunes-actifs.html?resetToken=${token}`);
     }
-
+ 
     return res.status(400).send('Réponse invalide.');
-  });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).send('Une erreur est survenue.');
+  }
 });
-
+ 
+// ------------------------------------------------------------------
+// RESET SUBMIT — vulnérable
+// ------------------------------------------------------------------
 app.post('/reset-submit', (req, res) => {
   const { token, password, confirm } = req.body;
-
+ 
   if (!token || !password || !confirm) {
     return res.status(400).json({ error: "Merci de remplir tous les champs." });
   }
@@ -248,114 +230,66 @@ app.post('/reset-submit', (req, res) => {
   if (password !== confirm) {
     return res.status(400).json({ error: "Les deux mots de passe ne correspondent pas." });
   }
-
-  const tokenQuery = `SELECT * FROM reset_tokens WHERE token = '${token}'`;
-  db.get(tokenQuery, (err, row) => {
-    if (err) {
-      console.error(err);
-      return res.status(500).json({ error: "Une erreur est survenue." });
+ 
+  try {
+    const tokenRow = db.prepare('SELECT * FROM reset_tokens WHERE token = ? AND confirmed = 1 AND used = 0').get(token);
+ 
+    if (!tokenRow) {
+      return res.status(403).json({ error: "Cette demande n'a pas été confirmée ou a expiré." });
     }
-    if (!row) {
-      return res.status(404).json({ error: "Lien invalide." });
-    }
-    if (row.used === 1) {
-      return res.status(410).json({ error: "Ce lien a déjà été utilisé." });
-    }
-    if (row.confirmed !== 1) {
-      return res.status(403).json({ error: "Cette demande n'a pas été confirmée." });
-    }
-
+ 
     const THIRTY_MINUTES = 30 * 60 * 1000;
-    if (Date.now() - row.created_at > THIRTY_MINUTES) {
-      return res.status(410).json({ error: "Ce lien a expiré." });
+    if (Date.now() - tokenRow.created_at > THIRTY_MINUTES) {
+      return res.status(410).json({ error: "Ce lien a expiré. Merci de refaire une demande de réinitialisation." });
     }
-
-    const updateQuery = `UPDATE accounts SET password = '${password}' WHERE email = '${row.email}'`;
-    db.run(updateQuery, function (updateErr) {
-      if (updateErr) {
-        console.error(updateErr);
-        return res.status(500).json({ error: "Une erreur est survenue." });
-      }
-      if (this.changes === 0) {
-        return res.status(404).json({ error: "Aucun compte ne correspond à cet email." });
-      }
-
-      const markUsedQuery = `UPDATE reset_tokens SET used = 1 WHERE token = '${token}'`;
-      db.run(markUsedQuery, () => {
-        return res.json({ success: true });
-      });
-    });
-  });
+ 
+    const hashedPassword = encodePassword(password);
+ 
+    // 🚨 VULNÉRABLE
+    const updateQuery = `UPDATE accounts SET password = '${hashedPassword}' WHERE email = '${tokenRow.email}'`;
+    const result = db.prepare(updateQuery).run();
+ 
+    if (result.changes === 0) {
+      return res.status(404).json({ error: "Aucun compte ne correspond à cette demande." });
+    }
+ 
+    db.prepare('UPDATE reset_tokens SET used = 1 WHERE token = ?').run(token);
+ 
+    return res.json({ success: true });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ error: "Une erreur est survenue, merci de réessayer." });
+  }
 });
  
- 
+// ------------------------------------------------------------------
+// SESSION — vulnérable
+// ------------------------------------------------------------------
 app.get('/session', (req, res) => {
   if (!req.session.email) {
     return res.status(401).json({ error: "Non connecté." });
   }
-  const query = `SELECT * FROM accounts WHERE email = '${req.session.email}'`;
-  db.get(query, (err, row) => {
-    if (err || !row) {
+  try {
+    // 🚨 VULNÉRABLE
+    const row = db.prepare(`SELECT * FROM accounts WHERE email = '${req.session.email}'`).get();
+    if (!row) {
       return res.status(401).json({ error: "Non connecté." });
     }
     return res.json({ success: true, account: row });
-  });
-});
-
-app.post('/apply', (req, res) => {
-  if (!req.session.email) {
-    return res.status(401).json({ error: "Vous devez être connecté." });
+  } catch (err) {
+    return res.status(401).json({ error: "Non connecté." });
   }
-
-  const { type, title } = req.body;
-  if (!type || !title) {
-    return res.status(400).json({ error: "Données manquantes." });
-  }
-
-  const email = req.session.email;
-
-  const countQuery = `SELECT COUNT(*) AS count FROM applications WHERE email = ? AND type = ?`;
-  db.get(countQuery, [email, type], (err, row) => {
-    if (err) {
-      console.error(err);
-      return res.status(500).json({ error: "Une erreur est survenue." });
-    }
-
-    if (row.count >= 2) {
-      const label = type === 'emploi' ? "d'offres d'emploi" : "de formations";
-      return res.status(400).json({ error: `Vous avez déjà atteint la limite de 2 demandes ${label}.` });
-    }
-
-    const insertQuery = `INSERT INTO applications (email, type, title, created_at) VALUES (?, ?, ?, ?)`;
-    db.run(insertQuery, [email, type, title, Date.now()], (insertErr) => {
-      if (insertErr) {
-        console.error(insertErr);
-        return res.status(500).json({ error: "Une erreur est survenue." });
-      }
-      return res.json({ success: true });
-    });
-  });
-});
-
-app.get('/applications', (req, res) => {
-  if (!req.session.email) {
-    return res.status(401).json({ error: "Vous devez être connecté." });
-  }
-
-  const query = `SELECT type, title, created_at FROM applications WHERE email = ? ORDER BY created_at DESC`;
-  db.all(query, [req.session.email], (err, rows) => {
-    if (err) {
-      console.error(err);
-      return res.status(500).json({ error: "Une erreur est survenue." });
-    }
-    return res.json({ applications: rows });
-  });
 });
  
+// ------------------------------------------------------------------
+// LOGOUT
+// ------------------------------------------------------------------
 app.post('/logout', (req, res) => {
   req.session.destroy(() => {
     return res.json({ success: true });
   });
 });
  
-app.listen(3000, () => console.log('Serveur sur http://localhost:3000'));
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log(`Serveur sur le port ${PORT}`));
+ 
