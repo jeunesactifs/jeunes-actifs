@@ -795,7 +795,7 @@
   }
 
   try{
-    const response = await fetch('http://localhost:3000/signup', {
+    const response = await fetch('/signup', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ prenom, nom, email, telephone, password, niveau, nationalite })
@@ -828,7 +828,7 @@ async function handleLogin(e){
   }
 
   try{
-    const response = await fetch('http://localhost:3000/login', {
+    const response = await fetch('/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
@@ -859,7 +859,7 @@ function showToast(message){
 
 async function saveApplication(type, title){
   try{
-    const response = await fetch('http://localhost:3000/apply', {
+    const response = await fetch('/apply', {
       method: 'POST',
       credentials: 'include',
       headers: { 'Content-Type': 'application/json' },
@@ -887,7 +887,7 @@ async function openApplicationsModal(){
   listEl.innerHTML = '<p class="applications-empty">Chargement...</p>';
 
   try{
-    const response = await fetch('http://localhost:3000/applications', {
+    const response = await fetch('/applications', {
       credentials: 'include'
     });
     const data = await response.json();
@@ -992,7 +992,7 @@ async function openApplicationsModal(){
       return;
     }
     try{
-      const response = await fetch('http://localhost:3000/reset-request', {
+      const response = await fetch('/reset-request', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email })
@@ -1030,7 +1030,7 @@ async function openApplicationsModal(){
 
     try{
     
-    const response = await fetch('http://localhost:3000/reset-submit', {
+    const response = await fetch('/reset-submit', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ token: resetToken, password, confirm })
@@ -1066,7 +1066,7 @@ async function openApplicationsModal(){
 
   async function logout(){
   try{
-    await fetch('http://localhost:3000/logout', {
+    await fetch('/logout', {
       method: 'POST',
       credentials: 'include'
     });
@@ -1095,7 +1095,7 @@ async function openApplicationsModal(){
 
   async function restoreSession(){
   try{
-    const response = await fetch('http://localhost:3000/session', {
+    const response = await fetch('/session', {
       credentials: 'include'
     });
     if(response.ok){
