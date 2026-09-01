@@ -1,5 +1,4 @@
 
-
 const express = require('express');
 const Database = require('better-sqlite3');
 const crypto = require('crypto');
@@ -26,6 +25,7 @@ app.use(express.static(__dirname));
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'jeunes-actifs.html'));
 });
+
 
 const transporter = nodemailer.createTransport({
   service: 'gmail',
