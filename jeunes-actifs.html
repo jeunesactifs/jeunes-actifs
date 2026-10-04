@@ -859,11 +859,11 @@ function showToast(message){
 
 async function saveApplication(type, title){
   try{
-    const response = await fetch('/apply', {
+    const response = await fetch('/candidatures', {
       method: 'POST',
       credentials: 'include',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ type, title })
+      body: JSON.stringify({ type, titre: title })
     });
     const data = await response.json();
 
@@ -887,7 +887,7 @@ async function openApplicationsModal(){
   listEl.innerHTML = '<p class="applications-empty">Chargement...</p>';
 
   try{
-    const response = await fetch('/applications', {
+    const response = await fetch('/candidatures', {
       credentials: 'include'
     });
     const data = await response.json();
@@ -897,7 +897,7 @@ async function openApplicationsModal(){
       return;
     }
 
-    const list = data.applications;
+    const list = data.candidatures;
     if(list.length === 0){
       listEl.innerHTML = '<p class="applications-empty">Vous n\'avez encore envoyé aucune demande.</p>';
       return;
@@ -912,7 +912,7 @@ async function openApplicationsModal(){
         <div class="application-top">
           <span class="card-tag ${tagClass}">${tagLabel}</span>
         </div>
-        <h3>${item.title}</h3>
+        <h3>${item.titre}</h3>
       </div>`;
     }).join('');
   }catch(err){
