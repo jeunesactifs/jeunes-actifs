@@ -4,7 +4,29 @@ const crypto = require('crypto');
 const cors = require('cors');
 const session = require('express-session');
 const nodemailer = require('nodemailer');
- 
+
+async function ajouterAuBrevo(email, prenom) {
+  try {
+    const res = await fetch("https://api.brevo.com/v3/contacts", {
+      method: "POST",
+      headers: {
+        "api-key": process.env.BREVO_API_KEY,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        email: email,
+        attributes: { PRENOM: prenom },
+        listIds: [Number(process.env.BREVO_LIST_ID)],
+        updateEnabled: true
+      })
+    });
+    if (!res.ok) {
+      console.error("Brevo erreur :", res.status, await res.text());
+    }
+  } catch (err) {
+    console.error("Brevo :", err.message);
+  }
+} 
 const app = express();
  
 app.use(cors({
@@ -93,9 +115,11 @@ app.post('/signup', (req, res) => {
       VALUES ('${prenom}', '${nom}', '${email}', '${telephone}', '${password}', '${niveau}', '${nationalite}')
     `;
     const result = db.prepare(insertQuery).run();
+
+    ajouterAuBrevo(email, prenom);
  
     return res.json({ success: true, id: result.lastInsertRowid });
-  } catch (err) {
+  } catch (err) { 
     console.error(err);
     return res.status(500).json({ error: "Impossible de créer le compte pour le moment. Réessayez." });
   }
