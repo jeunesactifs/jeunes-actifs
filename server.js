@@ -27,6 +27,26 @@ async function ajouterAuBrevo(email, prenom) {
     console.error("Brevo :", err.message);
   }
 } 
+
+async function envoyerEmail(destinataire, sujet, html) {
+  const res = await fetch("https://api.brevo.com/v3/smtp/email", {
+    method: "POST",
+    headers: {
+      "api-key": process.env.BREVO_API_KEY,
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      sender: { name: "Jeunes Actifs", email: process.env.MAIL_FROM },
+      to: [{ email: destinataire }],
+      subject: sujet,
+      htmlContent: html
+    })
+  });
+  if (!res.ok) {
+    console.error("Brevo email erreur :", res.status, await res.text());
+  }
+}
+
 const app = express();
  
 app.use(cors({
@@ -188,11 +208,7 @@ Ce lien expire dans 30 minutes.
 L'équipe Jeunes Actifs`
       };
  
-      transporter.sendMail(mailOptions, (mailErr) => {
-        if (mailErr) console.error('Erreur envoi email:', mailErr);
-      });
-    }
- 
+      envoyerEmail(mailOptions.to, mailOptions.subject, mailOptions.text.replace(/\n/g, "<br>")).catch((e) => console.error('Erreur envoi email:', e));
     return res.json({ success: true });
   } catch (err) {
     console.error(err);
