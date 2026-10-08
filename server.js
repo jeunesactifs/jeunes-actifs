@@ -209,6 +209,8 @@ L'équipe Jeunes Actifs`
       };
  
       envoyerEmail(mailOptions.to, mailOptions.subject, mailOptions.text.replace(/\n/g, "<br>")).catch((e) => console.error('Erreur envoi email:', e));
+    }
+
     return res.json({ success: true });
   } catch (err) {
     console.error(err);
